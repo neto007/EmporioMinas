@@ -7,27 +7,27 @@
   <form (ngSubmit)="onSignupGoogle(g)" #g="ngForm">
     <mat-card-actions class="button">
       <!-- mat-raised-button class="primary" -->
-      <button class="btn btn-block btn-social btn-google" type="submit" [disabled]="!g.valid"><span class="fa fa-google"></span> Sign up with your Google Account</button>
+      <button class="btn btn-block btn-social btn-google" type="submit" [disabled]="!g.valid"><span class="fa fa-google"></span> Criar conta com o Google</button>
     </mat-card-actions>
   </form>
   <form (ngSubmit)="onSignupTwitter(t)" #t="ngForm">
     <mat-card-actions class="button">
-      <button class="btn btn-block btn-social btn-twitter" type="submit" [disabled]="!t.valid"><span class="fa fa-twitter"></span> Sign up with your Twitter Account</button>
+      <button class="btn btn-block btn-social btn-twitter" type="submit" [disabled]="!t.valid"><span class="fa fa-twitter"></span> Criar conta com o twitter</button>
     </mat-card-actions>
   </form> 
   <form (ngSubmit)="onSignupFacebook(fb)" #fb="ngForm">
     <mat-card-actions class="button">
-      <button class="btn btn-block btn-social btn-facebook" type="submit" [disabled]="!fb.valid"><span class="fa fa-facebook"></span> Sign up with your Facebook Account</button>
+      <button class="btn btn-block btn-social btn-facebook" type="submit" [disabled]="!fb.valid"><span class="fa fa-facebook"></span> Criar conta com o facebook</button>
     </mat-card-actions>
   </form>
   <form (ngSubmit)="onSignupGithub(gh)" #gh="ngForm">
     <mat-card-actions class="button">
-      <button class="btn btn-block btn-social btn-github" type="submit" [disabled]="!gh.valid"><span class="fa fa-github"></span> Sign up with your Github Account</button>
+      <button class="btn btn-block btn-social btn-github" type="submit" [disabled]="!gh.valid"><span class="fa fa-github"></span> Criar conta com o Github</button>
     </mat-card-actions>
   </form>
 
   <hr />
-  <h3>Or sign up with your email</h3>
+  <h3>Ou Logar com seu E-mail</h3>
 
   <form (ngSubmit)="onSignup(f)" #f="ngForm">
     <mat-form-field class="full-width">
@@ -36,10 +36,10 @@
     </mat-form-field>
     <mat-form-field class="full-width">
       <!--<label for ="password">Password</label>-->
-      <input matInput placeholder="Password" type="password" id="password" name="password" ngModel required>
+      <input matInput placeholder="Senha" type="password" id="password" name="password" ngModel required>
     </mat-form-field>
     <mat-card-actions class="button">
-      <button mat-raised-button class="primary" type="submit" [disabled]="!f.valid">Register</button>
+      <button mat-raised-button class="primary" type="submit" [disabled]="!f.valid">Registrar</button>
     </mat-card-actions>
   </form>
   <!--

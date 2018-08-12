@@ -6,22 +6,22 @@
   <div class="menu-link">
     <button mat-button routerLink="/home" (click)="sidenav.close()">
       <mat-icon class="home">home</mat-icon>
-      <span>Home</span>
+      <span>Pagina Inicial</span>
     </button>
 
     <button mat-button routerLink="/about" (click)="sidenav.close()">
       <mat-icon class="about">pageview</mat-icon>
-      <span>About</span>
+      <span>Quem Somos</span>
     </button>
 
     <button mat-button routerLink="/contact" (click)="sidenav.close()">
       <mat-icon class="contact">email</mat-icon>
-      <span>Contact</span>
+      <span>Contato</span>
     </button>
 
     <button mat-button routerLink="/misc" (click)="sidenav.close()">
       <mat-icon class="misc">burst_mode</mat-icon>
-      <span>Misc</span>
+      <span>Criar Promoção</span>
     </button>
 
     <hr>
@@ -29,12 +29,12 @@
     <div *ngIf="!authService.isAuthenticated(); else logout">
       <button mat-button routerLink="/signup" (click)="sidenav.close()">
         <mat-icon class="signup">person_add</mat-icon>
-        <span>Signup</span>
+        <span>Criar Conta</span>
       </button>
 
       <button mat-button routerLink="/login" (click)="sidenav.close()">
         <mat-icon class="login">lock_open</mat-icon>
-        <span>Login</span>
+        <span>entrar</span>
       </button>
     </div>
 

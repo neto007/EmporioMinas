@@ -5,7 +5,7 @@ export function getTranslationProviders(): Promise<Object[]> {
 
   const noProviders: Object[] = [];
 
-  if (!locale || locale === 'en-US') {
+  if (!locale || locale === 'pt-BR') {
     return Promise.resolve(noProviders);
   }
   // 'locale/messages.nl.xlf`

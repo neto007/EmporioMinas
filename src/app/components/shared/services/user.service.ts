@@ -59,30 +59,7 @@ export class UserService {
     });
   }
 
-  /*
-  specificUserProfile() {
-      if (firebase.auth().currentUser != null) {
-        firebase.auth().currentUser.providerData.forEach((profile) => {
-          console.log("Sign-in provider: "+profile.providerId);
-          console.log("  Provider-specific UID: "+profile.uid);
-          console.log("  Name: "+profile.displayName);
-          console.log("  Email: "+profile.email);
-          console.log("  Photo URL: "+profile.photoURL);
-          return "  Email: "+profile.email;
-        });
-      }
-  }
 
-  getUserProfile() {
-      firebase.auth().onAuthStateChanged((currentUser) => {
-        if (currentUser = this.authService.isAuthenticated) {
-          console.log(currentUser);
-        } else {
-
-        }
-      });
-  }
-  */
 
   getUserProfileInformation() {
     const user = firebase.auth().currentUser;

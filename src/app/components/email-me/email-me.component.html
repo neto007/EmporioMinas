@@ -5,7 +5,7 @@
       <input matInput formControlName="email" placeholder="Your Email" type="email" ngModel required>
     </mat-form-field>
     <div *ngIf="!form.controls.email.valid  && form.controls.email.dirty">
-      <p>Please enter a valid email.</p>
+      <p>Por Favor entre com E-email Valido</p>
     </div>
     <br />
     <button mat-raised-button class="primary" type="submit" [disabled]="form.invalid">Submit</button>

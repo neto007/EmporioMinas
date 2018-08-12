@@ -1,36 +1,72 @@
 import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
-import * as firebase from 'firebase';
+import { firebase } from '@firebase/app';
+import { auth } from 'firebase';
+import { AngularFireAuth } from 'angularfire2/auth';
+import {
+  AngularFirestore,
+  AngularFirestoreDocument
+} from 'angularfire2/firestore';
+
+
+import { Observable, of } from 'rxjs';
+import { switchMap, startWith, tap, filter } from 'rxjs/operators';
+
+
 
 import { AlertService } from './alert.service';
 import { UserService } from './user.service';
+import { User } from 'src/app/components/shared/models/user.model';
 
 @Injectable()
 export class AuthService {
   token: string;
+  user: Observable<User | null>;
 
   constructor(
     private router: Router,
     private alertService: AlertService,
-    private userService: UserService) { }
+    private userService: UserService,
+    private afAuth: AngularFireAuth,
+    private afs: AngularFirestore) { 
+
+      this.user = this.afAuth.authState.pipe(
+        switchMap(user => {
+          if (user) {
+            return this.afs.doc<User>(`users/${user.uid}`).valueChanges();
+          } else {
+            return of(null);
+          }
+        }),
+        tap(user => localStorage.setItem('user', JSON.stringify(user))),
+        startWith(JSON.parse(localStorage.getItem('user')))
+      );
+
+    }
+
+    private oAuthLogin(provider: any) {
+      return this.afAuth.auth
+        .signInWithPopup(provider)
+        .then(credential => {
+          return this.updateUserData(this.userService.uid);
+        })
+        .catch(error => this.handleError(error));
+    }
+  
 
   // Signup/register
   signUpWithGoogle() {
-    const providerGoogle = new firebase.auth.GoogleAuthProvider();
-    return firebase.auth().signInWithPopup(providerGoogle)
-      .then((result) => {
-        const token = result.credential.accessToken;
-        const currentUser = result.user;
-      })
+    const provider = new auth.GoogleAuthProvider();
+    return this.oAuthLogin(provider)
       .then(response => {
         this.router.navigate(['/']);
-        firebase.auth().currentUser.getIdToken()
+        this.afAuth.auth.currentUser.getIdToken()
           .then(
             (token: string) => this.token = token
           );
-        this.alertService.showToaster('Verification email is sent to you.');
+        this.alertService.showToaster('O e-mail de verificação é enviado para você');
         this.userService.verificationUserEmail();
-        this.userService.saveUserInfo(firebase.auth().currentUser.uid, name, firebase.auth().currentUser.email);
+        this.userService.saveUserInfo(this.afAuth.auth.currentUser.uid, name, this.afAuth.auth.currentUser.email);
       }
       )
       .catch(
@@ -39,22 +75,17 @@ export class AuthService {
   }
 
   signUpWithTwitter() {
-    const providerTwitter = new firebase.auth.TwitterAuthProvider();
-    return firebase.auth().signInWithPopup(providerTwitter)
-      .then((result) => {
-        const token = result.credential.accessToken;
-        const currentUser = result.user;
-        const secret = result.credential.secret;
-      })
+    const provider = new auth.TwitterAuthProvider();
+    return this.oAuthLogin(provider)
       .then(response => {
         this.router.navigate(['/']);
-        firebase.auth().currentUser.getIdToken()
+        this.afAuth.auth.currentUser.getIdToken()
           .then(
             (token: string) => this.token = token
           );
-        this.alertService.showToaster('Please check your inbox for a verification email.');
+        this.alertService.showToaster('Por favor, verifique sua caixa de entrada para um e-mail de verificação.');
         this.userService.verificationUserEmail();
-        this.userService.saveUserInfo(firebase.auth().currentUser.uid, name, firebase.auth().currentUser.email);
+        this.userService.saveUserInfo(this.afAuth.auth.currentUser.uid, name, this.afAuth.auth.currentUser.email);
       }
       )
       .catch(
@@ -63,18 +94,18 @@ export class AuthService {
   }
 
   signUpWithFacebook() {
-    const providerFacebook = new firebase.auth.FacebookAuthProvider();
-    return firebase.auth().signInWithPopup(providerFacebook)
+    const provider = new auth.FacebookAuthProvider();
+    return this.oAuthLogin(provider)
       .then(
-        response => {
+        provider => {
           this.router.navigate(['/']);
-          firebase.auth().currentUser.getIdToken()
+          this.afAuth.auth.currentUser.getIdToken()
             .then(
               (token: string) => this.token = token
             );
-          this.alertService.showToaster('Verification email is sent to you.');
+          this.alertService.showToaster('O e-mail de verificação é enviado para você.');
           this.userService.verificationUserEmail();
-          this.userService.saveUserInfo(firebase.auth().currentUser.uid, name, firebase.auth().currentUser.email);
+          this.userService.saveUserInfo(this.afAuth.auth.currentUser.uid, name, this.afAuth.auth.currentUser.email);
         }
       )
       .catch(
@@ -83,18 +114,16 @@ export class AuthService {
   }
 
   signUpWithGithub() {
-    const providerGithub = new firebase.auth.GithubAuthProvider();
-      return firebase.auth().signInWithPopup(providerGithub)
-      .then((result) => {
-        const token = result.credential.accessToken;
-        const currentUser = result.user;
-        this.alertService.showToaster('Verification email is sent to you.');
+    const provider = new auth.GithubAuthProvider();
+    return this.oAuthLogin(provider)
+      .then((provider) => {
+        this.alertService.showToaster('O e-mail de verificação é enviado para você.');
         this.userService.verificationUserEmail();
-        this.userService.saveUserInfo(firebase.auth().currentUser.uid, name, firebase.auth().currentUser.email);
+        this.userService.saveUserInfo(this.afAuth.auth.currentUser.uid, name, this.afAuth.auth.currentUser.email);
       })
       .then(response => {
         this.router.navigate(['/']);
-        firebase.auth().currentUser.getIdToken()
+        this.afAuth.auth.currentUser.getIdToken()
           .then(
             (token: string) => this.token = token
           );
@@ -106,11 +135,11 @@ export class AuthService {
   }
 
   signupUser(email: string, password: string) {
-    return firebase.auth().createUserWithEmailAndPassword(email, password)
+    return this.afAuth.auth.createUserWithEmailAndPassword(email, password)
       .then((result) => {
-        this.alertService.showToaster('Verification email is sent to you.');
+        this.alertService.showToaster('O e-mail de verificação é enviado para você.');
         this.userService.verificationUserEmail();
-        this.userService.saveUserInfo(firebase.auth().currentUser.uid, name, email);
+        this.userService.saveUserInfo(this.afAuth.auth.currentUser.uid, name, email);
       }
       ).catch(
         error => console.error(error)
@@ -119,19 +148,15 @@ export class AuthService {
 
   // Signin/login
   signInWithGoogle() {
-    const providerGoogle = new firebase.auth.GoogleAuthProvider();
-    return firebase.auth().signInWithPopup(providerGoogle)
-      .then((result) => {
-        const token = result.credential.accessToken;
-        const currentUser = result.user;
-      })
+    const provider = new auth.GoogleAuthProvider();
+    return this.oAuthLogin(provider)
       .then(response => {
         this.router.navigate(['/']);
-        firebase.auth().currentUser.getIdToken()
+        this.afAuth.auth.currentUser.getIdToken()
           .then(
             (token: string) => this.token = token
           );
-        this.alertService.showToaster('Google login succesful');
+        this.alertService.showToaster('Google login com Sucesso');
       }
       )
       .catch(
@@ -140,15 +165,15 @@ export class AuthService {
   }
 
   signInWithTwitter() {
-    const providerTwitter = new firebase.auth.TwitterAuthProvider();
-    return firebase.auth().signInWithPopup(providerTwitter)
+    const provider = new auth.TwitterAuthProvider();
+    return this.oAuthLogin(provider)
       .then(response => {
         this.router.navigate(['/']);
-        firebase.auth().currentUser.getIdToken()
+        this.afAuth.auth.currentUser.getIdToken()
           .then(
             (token: string) => this.token = token
           );
-        this.alertService.showToaster('Twitter login succesful');
+        this.alertService.showToaster('Twitter login com Sucesso');
       }
       )
       .catch(
@@ -157,16 +182,16 @@ export class AuthService {
   }
 
   signInWithFacebook() {
-    const providerFacebook = new firebase.auth.FacebookAuthProvider();
-    return firebase.auth().signInWithPopup(providerFacebook)
+    const provider = new auth.FacebookAuthProvider();
+    return this.oAuthLogin(provider)
       .then(
         response => {
           this.router.navigate(['/']);
-          firebase.auth().currentUser.getIdToken()
+          this.afAuth.auth.currentUser.getIdToken()
             .then(
               (token: string) => this.token = token
             );
-          this.alertService.showToaster('Facebook login succesful');
+          this.alertService.showToaster('Facebook login com Sucesso');
         }
       )
       .catch(
@@ -175,19 +200,15 @@ export class AuthService {
   }
 
   signInWithGithub() {
-    const providerGithub = new firebase.auth.GithubAuthProvider();
-    return firebase.auth().signInWithPopup(providerGithub)
-      .then((result) => {
-        const token = result.credential.accessToken;
-        const currentUser = result.user;
-      })
+    const provider = new auth.GithubAuthProvider();
+    return this.oAuthLogin(provider)
       .then(response => {
         this.router.navigate(['/']);
-        firebase.auth().currentUser.getIdToken()
+        this.afAuth.auth.currentUser.getIdToken()
           .then(
             (token: string) => this.token = token
           );
-        this.alertService.showToaster('Github login succesful');
+        this.alertService.showToaster('Github login com Sucesso');
       }
       )
       .catch(
@@ -196,16 +217,16 @@ export class AuthService {
   }
 
   signinUser(email: string, password: string) {
-    return firebase.auth().signInWithEmailAndPassword(email, password)
+    return  this.afAuth.auth.signInWithEmailAndPassword(email, password)
       .then(
         response => {
           this.router.navigate(['/']);
           // firebase.auth().currentUser.getToken()
-          firebase.auth().currentUser.getIdToken()
+          this.afAuth.auth.currentUser.getIdToken()
             .then(
               (token: string) => this.token = token
             );
-          this.alertService.showToaster('Login succesful');
+          this.alertService.showToaster('Login com Sucesso');
         }
       )
       .catch(
@@ -214,18 +235,18 @@ export class AuthService {
   }
 
   signInAnonymous() {
-    return firebase.auth().signInAnonymously()
+    return  this.afAuth.auth.signInAnonymously()
       .then(
         response => {
           this.router.navigate(['/']);
-          firebase.auth().onAuthStateChanged(currentUser => {
+          this.afAuth.auth.onAuthStateChanged(currentUser => {
             const isAnonymous = currentUser.isAnonymous;
             const uid = currentUser.uid;
-            firebase.auth().currentUser.getIdToken()
+            this.afAuth.auth.currentUser.getIdToken()
               .then(
                 (token: string) => this.token = token
               ),
-              this.alertService.showToaster('Anonymous login succesful');
+              this.alertService.showToaster('Anonymous login com Sucesso');
             console.log(currentUser);
           });
         }
@@ -237,7 +258,7 @@ export class AuthService {
 
   // Other
   logout() {
-    return firebase.auth().signOut()
+    return  this.afAuth.auth.signOut()
       .then(
         response => {
           this.router.navigate(['/home']);
@@ -250,7 +271,7 @@ export class AuthService {
   }
 
   getIdToken() {
-    firebase.auth().currentUser.getIdToken()
+    this.afAuth.auth.currentUser.getIdToken()
       .then(
         (token: string) => this.token = token
       );
@@ -260,4 +281,35 @@ export class AuthService {
   isAuthenticated() {
     return this.token != null;
   }
+
+
+    // If error, console log and notify user
+    private handleError(error: Error) {
+      console.error(error);
+     
+    }
+  
+    // Sets user data to firestore after succesful login
+    private updateUserData(user: User) {
+      const userRef: AngularFirestoreDocument<User> = this.afs.doc(
+        `users/${user.uid}`
+      );
+  
+      const data: User = {
+        uid: user.uid,
+        firstName: user.firstName,
+        lastName:user.lastName,
+        fullName : user.fullName,
+        bio:user.bio,
+        password: user.password,
+        providerId: user.providerId,
+        idToken: user.idToken,
+        photoUrl: user.photoUrl || 'https://goo.gl/Fz9nrQ',
+        email: user.email || null,
+        displayName: user.displayName || 'nameless user',
+      };
+      return userRef.set(data);
+    }
+
+
 }

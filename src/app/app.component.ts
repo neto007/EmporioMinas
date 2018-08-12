@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import * as firebase from 'firebase';
+import { AngularFirestore } from 'angularfire2/firestore';
 
 @Component({
   selector: 'app-root',
@@ -9,15 +10,19 @@ import * as firebase from 'firebase';
 
 export class AppComponent implements OnInit {
 
+    constructor(db: AngularFirestore) {
+  
+    }
+
   ngOnInit() {
     firebase.initializeApp({
       // For other projects use different keys
-      apiKey: 'AIzaSyBUYZcc_HKi1TckbZPpSjSkxyFvml3Is0A',
-      authDomain: 'angular4materialdesign.firebaseapp.com',
-      databaseURL: 'https://angular4materialdesign.firebaseio.com',
-      projectId: 'angular4materialdesign',
-      storageBucket: 'angular4materialdesign.appspot.com',
-      messagingSenderId: '136985605193'
+      apiKey: "AIzaSyB_1iOhRSdRmEqWVEl8XtVZLSEM2r_cazY",
+      authDomain: "electronapp-d2cb6.firebaseapp.com",
+      databaseURL: "https://electronapp-d2cb6.firebaseio.com",
+      projectId: "electronapp-d2cb6",
+      storageBucket: "electronapp-d2cb6.appspot.com",
+      messagingSenderId: "352468646900"
     });
 
     // See users, messages and keep in touch in console log

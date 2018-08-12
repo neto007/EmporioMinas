@@ -37,7 +37,7 @@ export class HeaderComponent {
     private userService: UserService
     ) {
       this.isAuthenticated = this.authService.isAuthenticated(),
-      this.angularImage = '/assets/img/angular2.png';
+      this.angularImage = '/assets/img/emporio.png';
   }
 
   userUid() {

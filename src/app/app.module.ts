@@ -7,12 +7,16 @@ import { MatButtonModule, MatCheckboxModule, MatMenuModule, MatInputModule, MatS
          MatCardModule, MatTabsModule, MatIconModule } from '@angular/material';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
+import { environment } from '../environments/environment';
 
 // Modules
 import { MessagesModule } from './components/messages/messages.module';
 import { PipesModule } from './pipes/pipes.module';
 import { BlocksModule } from './components/blocks/blocks.module';
-import { AuthModule } from './components/auth/auth.module';
+import { AngularFireModule } from 'angularfire2';
+import { AngularFirestoreModule } from 'angularfire2/firestore';
+import { AngularFireStorageModule } from 'angularfire2/storage';
+import { AngularFireAuthModule } from 'angularfire2/auth';
 import { BackgroundsModule } from './components/backgrounds/backgrounds.module';
 import { ProfileModule } from './components/profile/profile.module';
 import { MiscModule } from './components/misc/misc.module';
@@ -40,6 +44,9 @@ import { AboutMeComponent } from './components/about-me/about-me.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { PageNotFoundComponent } from './components/not-found/not-found.component';
 import { EmailMeComponent } from './components/email-me/email-me.component';
+import { SignupComponent } from './components/auth/signup.component';
+import { SigninComponent } from './components/auth/signin.component';
+
 
 @NgModule({
   declarations: [
@@ -50,10 +57,13 @@ import { EmailMeComponent } from './components/email-me/email-me.component';
     HeaderComponent,
     FooterComponent,
     PageNotFoundComponent,
-    EmailMeComponent
+    EmailMeComponent,
+    SignupComponent,
+    SigninComponent
     // routingComponents
   ],
   imports: [
+    AngularFireModule.initializeApp(environment.firebase),
     BrowserModule,
     BrowserAnimationsModule,
     MatButtonModule, MatCheckboxModule, MatMenuModule, MatInputModule, MatSnackBarModule,
@@ -66,7 +76,9 @@ import { EmailMeComponent } from './components/email-me/email-me.component';
     MessagesModule,
     PipesModule,
     BlocksModule,
-    AuthModule,
+    AngularFirestoreModule, // imports firebase/firestore, only needed for database features
+    AngularFireAuthModule, // imports firebase/auth, only needed for auth features,
+    AngularFireStorageModule,
     BackgroundsModule,
     ProfileModule,
     MiscModule
