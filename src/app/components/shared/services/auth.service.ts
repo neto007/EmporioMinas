@@ -282,19 +282,16 @@ export class AuthService {
     return this.token != null;
   }
 
-
     // If error, console log and notify user
     private handleError(error: Error) {
       console.error(error);
      
     }
-  
     // Sets user data to firestore after succesful login
     private updateUserData(user: User) {
       const userRef: AngularFirestoreDocument<User> = this.afs.doc(
         `users/${user.uid}`
       );
-  
       const data: User = {
         uid: user.uid,
         firstName: user.firstName,
@@ -310,6 +307,4 @@ export class AuthService {
       };
       return userRef.set(data);
     }
-
-
 }
