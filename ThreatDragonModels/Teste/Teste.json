@@ -5,8 +5,18 @@
     "description": "Teste da aplicao"
   },
   "detail": {
-    "contributors": [],
-    "diagrams": [],
+    "contributors": [
+      {
+        "name": "Salvador"
+      }
+    ],
+    "diagrams": [
+      {
+        "title": "Teste",
+        "thumbnail": "./public/content/images/thumbnail.jpg",
+        "id": 0
+      }
+    ],
     "reviewer": "Salvador"
   }
 }
